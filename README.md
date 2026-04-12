@@ -1,4 +1,5 @@
-
+**© 2026 International Group of Developers – All rights reserved.**  
+See the [LICENSE](./LICENSE) file for terms.
 # SMC v10.2: Sentinel Magnetic Control Unit
 
 ## Notice – Proprietary & Confidential
