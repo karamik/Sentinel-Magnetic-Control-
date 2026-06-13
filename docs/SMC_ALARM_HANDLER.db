@@ -1,0 +1,133 @@
+# SMC Alarm Handler Database
+
+**File:** `docs/SMC_ALARM_HANDLER.db`
+
+This EPICS database file defines alarm conditions, severity escalation, and automated interlock actions for the SMC v10.2. It ensures that the magnetic control system transitions to a safe state when critical parameters (latency, temperature, White Rabbit sync) exceed operational limits.
+
+```epics
+#
+# SMC v10.2 Alarm Handler Database
+# International Group of Developers (IGD)
+#
+
+# --------------------------------------------------------------
+# Latency alarm: major if >120 ns, minor if >100 ns
+# --------------------------------------------------------------
+record(ai, "$(P):$(R):LATENCY_LOG") {
+    field(DESC, "Hardware loop latency (ns)")
+    field(SCAN, "1 second")
+    field(EGU,  "ns")
+    field(HIGH, "100")
+    field(HIHI, "120")
+    field(HSV,  "MINOR")
+    field(HHSV, "MAJOR")
+    field(OSV,  "MAJOR")    # use MAJOR severity for invalid/undefined
+    field(FLNK, "$(P):$(R):LATENCY_ALARM")
+}
+
+record(calcout, "$(P):$(R):LATENCY_ALARM") {
+    field(DESC, "Latency alarm interlock")
+    field(INPA, "$(P):$(R):LATENCY_LOG.SEVR")
+    field(CALC, "A>=2")     # MAJOR severity has numeric value 2
+    field(OOPT, "When Non-zero")
+    field(OUT,  "$(P):$(R):LOOP_CMD PP")
+    field(OCAL, "0")        # set loop command to 0 (bypass)
+    field(FLNK, "$(P):$(R):ALARM_SUMMARY")
+}
+
+# --------------------------------------------------------------
+# FPGA temperature alarm: minor >65°C, major >75°C
+# --------------------------------------------------------------
+record(ai, "$(P):$(R):FPGA_TEMP") {
+    field(DESC, "FPGA temperature (°C)")
+    field(SCAN, "1 second")
+    field(EGU,  "°C")
+    field(HIGH, "65")
+    field(HIHI, "75")
+    field(HSV,  "MINOR")
+    field(HHSV, "MAJOR")
+    field(FLNK, "$(P):$(R):TEMP_ALARM")
+}
+
+record(calcout, "$(P):$(R):TEMP_ALARM") {
+    field(DESC, "Temperature interlock")
+    field(INPA, "$(P):$(R):FPGA_TEMP.SEVR")
+    field(CALC, "A>=2")
+    field(OOPT, "When Non-zero")
+    field(OUT,  "$(P):$(R):LOOP_CMD PP")
+    field(OCAL, "0")
+    field(FLNK, "$(P):$(R):ALARM_SUMMARY")
+}
+
+# --------------------------------------------------------------
+# White Rabbit sync loss: immediate major alarm
+# --------------------------------------------------------------
+record(bi, "$(P):$(R):WR_LOCKED") {
+    field(DESC, "White Rabbit locked status")
+    field(SCAN, "I/O Intr")
+    field(ZNAM, "UNLOCKED")
+    field(ONAM, "LOCKED")
+    field(OSV,  "MAJOR")    # UNLOCKED triggers MAJOR alarm
+    field(FLNK, "$(P):$(R):WR_ALARM")
+}
+
+record(calcout, "$(P):$(R):WR_ALARM") {
+    field(DESC, "White Rabbit interlock")
+    field(INPA, "$(P):$(R):WR_LOCKED.SEVR")
+    field(CALC, "A>=2")
+    field(OOPT, "When Non-zero")
+    field(OUT,  "$(P):$(R):LOOP_CMD PP")
+    field(OCAL, "0")
+    field(FLNK, "$(P):$(R):ALARM_SUMMARY")
+}
+
+# --------------------------------------------------------------
+# Field gradient out‑of‑bounds (optional, user‑configurable limits)
+# --------------------------------------------------------------
+record(ai, "$(P):$(R):FIELD_GRAD") {
+    field(DESC, "Magnetic field gradient (mT)")
+    field(SCAN, "1 second")
+    field(EGU,  "mT")
+    field(LOPR, "-10")      # example lower limit
+    field(HOPR, "10")       # example upper limit
+    field(LLO,  "-5")
+    field(LOLO, "-7")
+    field(HIHI, "5")
+    field(HIGH, "3")
+    field(LLSV, "MINOR")
+    field(LOLSV, "MAJOR")
+    field(HSV,  "MINOR")
+    field(HHSV, "MAJOR")
+    field(FLNK, "$(P):$(R):GRAD_ALARM")
+}
+
+record(calcout, "$(P):$(R):GRAD_ALARM") {
+    field(DESC, "Field gradient interlock (optional)")
+    field(INPA, "$(P):$(R):FIELD_GRAD.SEVR")
+    field(CALC, "A>=2")
+    field(OOPT, "When Non-zero")
+    field(OUT,  "$(P):$(R):LOOP_CMD PP")
+    field(OCAL, "0")
+    field(FLNK, "$(P):$(R):ALARM_SUMMARY")
+}
+
+# --------------------------------------------------------------
+# Combined alarm summary PV (for OPI banner)
+# --------------------------------------------------------------
+record(calc, "$(P):$(R):ALARM_SUMMARY") {
+    field(DESC, "Aggregate alarm status")
+    field(INPA, "$(P):$(R):LATENCY_LOG.SEVR")
+    field(INPB, "$(P):$(R):FPGA_TEMP.SEVR")
+    field(INPC, "$(P):$(R):WR_LOCKED.SEVR")
+    field(INPD, "$(P):$(R):FIELD_GRAD.SEVR")
+    field(CALC, "A+B+C+D")
+    field(EGU,  "severity")
+}
+
+# --------------------------------------------------------------
+# Persistent logging of alarm events (optional)
+# --------------------------------------------------------------
+record(stringin, "$(P):$(R):LAST_ALARM") {
+    field(DESC, "Last alarm message")
+    field(SCAN, "Passive")
+}
