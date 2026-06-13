@@ -1,0 +1,390 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<display type="org.csstudio.opibuilder.Display" version="1.0.0">
+  <name>SMC v10.2 Control Panel</name>
+  <width>800</width>
+  <height>600</height>
+  <grid_geometry>true</grid_geometry>
+  <grid_space>6</grid_space>
+  <snap_to_geometry>false</snap_to_geometry>
+  <auto_zoom_to_fit_all>false</auto_zoom_to_fit_all>
+  <macros>
+    <include_macros>true</include_macros>
+    <P>CERN:ALPHA:TRAP1</P>
+    <R>SMC01</R>
+  </macros>
+  <widget type="Label" version="2.0.0">
+    <name>TitleLabel</name>
+    <x>20</x>
+    <y>20</y>
+    <width>760</width>
+    <height>40</height>
+    <text>Sentinel Magnetic Control Unit v10.2 — EPICS Operator Interface</text>
+    <font>
+      <fontdata fontName="Segoe UI" height="18" style="1"/>
+    </font>
+    <foreground_color>
+      <color name="Title_Foreground" red="255" green="255" blue="255"/>
+    </foreground_color>
+    <background_color>
+      <color name="Title_Background" red="33" green="33" blue="33"/>
+    </background_color>
+  </widget>
+
+  <!-- Device Identity -->
+  <widget type="Label" version="2.0.0">
+    <name>DeviceLabel</name>
+    <x>30</x>
+    <y>80</y>
+    <width>120</width>
+    <height>25</height>
+    <text>Device: </text>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="0"/>
+    </font>
+  </widget>
+  <widget type="TextUpdate" version="2.0.0">
+    <name>DeviceID</name>
+    <x>120</x>
+    <y>80</y>
+    <width>200</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):DEVICE_ID</pv_name>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="0"/>
+    </font>
+  </widget>
+
+  <!-- Status Indicators -->
+  <widget type="LED" version="2.0.0">
+    <name>LoopActiveLED</name>
+    <x>30</x>
+    <y>120</y>
+    <width>20</width>
+    <height>20</height>
+    <pv_name>$(P):$(R):LOOP_STATUS</pv_name>
+    <on_color>
+      <color name="LED_Green" red="0" green="255" blue="0"/>
+    </on_color>
+    <off_color>
+      <color name="LED_Red" red="255" green="0" blue="0"/>
+    </off_color>
+    <tooltip>Hardware Loop Active</tooltip>
+  </widget>
+  <widget type="Label" version="2.0.0">
+    <name>LoopStateLabel</name>
+    <x>60</x>
+    <y>120</y>
+    <width>150</width>
+    <height>25</height>
+    <text>Hardware Loop</text>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="0"/>
+    </font>
+  </widget>
+
+  <!-- White Rabbit Sync -->
+  <widget type="LED" version="2.0.0">
+    <name>WRLockedLED</name>
+    <x>30</x>
+    <y>155</y>
+    <width>20</width>
+    <height>20</height>
+    <pv_name>$(P):$(R):WR_LOCKED</pv_name>
+    <on_color>
+      <color name="LED_Blue" red="0" green="100" blue="255"/>
+    </on_color>
+    <off_color>
+      <color name="LED_Red" red="255" green="0" blue="0"/>
+    </off_color>
+    <tooltip>White Rabbit Sync Status</tooltip>
+  </widget>
+  <widget type="Label" version="2.0.0">
+    <name>WRLockedLabel</name>
+    <x>60</x>
+    <y>155</y>
+    <width>180</width>
+    <height>25</height>
+    <text>White Rabbit Sync</text>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="0"/>
+    </font>
+  </widget>
+
+  <!-- Control Buttons -->
+  <widget type="ActionButton" version="2.0.0">
+    <name>LoopStartButton</name>
+    <x>300</x>
+    <y>120</y>
+    <width>100</width>
+    <height>30</height>
+    <text>Start Loop</text>
+    <pv_name>$(P):$(R):LOOP_CMD</pv_name>
+    <value>1</value>
+    <push_action>WRITE_PV</push_action>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="1"/>
+    </font>
+    <enabled>true</enabled>
+  </widget>
+  <widget type="ActionButton" version="2.0.0">
+    <name>LoopStopButton</name>
+    <x>420</x>
+    <y>120</y>
+    <width>100</width>
+    <height>30</height>
+    <text>Stop Loop</text>
+    <pv_name>$(P):$(R):LOOP_CMD</pv_name>
+    <value>0</value>
+    <push_action>WRITE_PV</push_action>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="1"/>
+    </font>
+  </widget>
+  <widget type="ActionButton" version="2.0.0">
+    <name>SaveConfigButton</name>
+    <x>540</x>
+    <y>120</y>
+    <width>120</width>
+    <height>30</height>
+    <text>Save Config to Flash</text>
+    <pv_name>$(P):$(R):SAVE_CONFIG</pv_name>
+    <value>1</value>
+    <push_action>WRITE_PV</push_action>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="0"/>
+    </font>
+  </widget>
+
+  <!-- Telemetry Group -->
+  <widget type="GroupBox" version="2.0.0">
+    <name>TelemetryGroup</name>
+    <x>30</x>
+    <y>210</y>
+    <width>350</width>
+    <height>220</height>
+    <text>Real‑Time Telemetry</text>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="1"/>
+    </font>
+  </widget>
+
+  <!-- Latency -->
+  <widget type="Label" version="2.0.0">
+    <name>LatencyLabel</name>
+    <x>50</x>
+    <y>240</y>
+    <width>120</width>
+    <height>25</height>
+    <text>Loop Latency:</text>
+  </widget>
+  <widget type="TextUpdate" version="2.0.0">
+    <name>LatencyValue</name>
+    <x>180</x>
+    <y>240</y>
+    <width>80</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):LATENCY_LOG</pv_name>
+    <format>DECIMAL</format>
+    <precision>1</precision>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="0"/>
+    </font>
+  </widget>
+  <widget type="Label" version="2.0.0">
+    <name>LatencyUnit</name>
+    <x>265</x>
+    <y>240</y>
+    <width>40</width>
+    <height>25</height>
+    <text>ns</text>
+  </widget>
+
+  <!-- Field Gradient -->
+  <widget type="Label" version="2.0.0">
+    <name>GradientLabel</name>
+    <x>50</x>
+    <y>275</y>
+    <width>120</width>
+    <height>25</height>
+    <text>Field Gradient:</text>
+  </widget>
+  <widget type="TextUpdate" version="2.0.0">
+    <name>GradientValue</name>
+    <x>180</x>
+    <y>275</y>
+    <width>80</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):FIELD_GRAD</pv_name>
+    <format>DECIMAL</format>
+    <precision>3</precision>
+  </widget>
+  <widget type="Label" version="2.0.0">
+    <name>GradientUnit</name>
+    <x>265</x>
+    <y>275</y>
+    <width>40</width>
+    <height>25</height>
+    <text>mT</text>
+  </widget>
+
+  <!-- FPGA Temperature -->
+  <widget type="Label" version="2.0.0">
+    <name>TempLabel</name>
+    <x>50</x>
+    <y>310</y>
+    <width>120</width>
+    <height>25</height>
+    <text>FPGA Temperature:</text>
+  </widget>
+  <widget type="TextUpdate" version="2.0.0">
+    <name>TempValue</name>
+    <x>180</x>
+    <y>310</y>
+    <width>80</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):FPGA_TEMP</pv_name>
+    <format>DECIMAL</format>
+    <precision>1</precision>
+  </widget>
+  <widget type="Label" version="2.0.0">
+    <name>TempUnit</name>
+    <x>265</x>
+    <y>310</y>
+    <width>40</width>
+    <height>25</height>
+    <text>°C</text>
+  </widget>
+
+  <!-- White Rabbit Offset -->
+  <widget type="Label" version="2.0.0">
+    <name>WROffsetLabel</name>
+    <x>50</x>
+    <y>345</y>
+    <width>120</width>
+    <height>25</height>
+    <text>WR Offset:</text>
+  </widget>
+  <widget type="TextUpdate" version="2.0.0">
+    <name>WROffsetValue</name>
+    <x>180</x>
+    <y>345</y>
+    <width>80</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):WR_OFFSET</pv_name>
+    <format>DECIMAL</format>
+    <precision>3</precision>
+  </widget>
+  <widget type="Label" version="2.0.0">
+    <name>WROffsetUnit</name>
+    <x>265</x>
+    <y>345</y>
+    <width>40</width>
+    <height>25</height>
+    <text>ns</text>
+  </widget>
+
+  <!-- Coefficient Configuration -->
+  <widget type="GroupBox" version="2.0.0">
+    <name>CoeffGroup</name>
+    <x>420</x>
+    <y>210</y>
+    <width>350</width>
+    <height>220</height>
+    <text>Filter Coefficients (MAC Matrix)</text>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="1"/>
+    </font>
+  </widget>
+  <widget type="TextInput" version="2.0.0">
+    <name>Coeff0</name>
+    <x>440</x>
+    <y>240</y>
+    <width>100</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):COEFFS_SET[0]</pv_name>
+    <limit_from_pv>false</limit_from_pv>
+    <font>
+      <fontdata fontName="Segoe UI" height="12" style="0"/>
+    </font>
+  </widget>
+  <widget type="Label" version="2.0.0">
+    <name>Coeff0Label</name>
+    <x>545</x>
+    <y>240</y>
+    <width>50</width>
+    <height>25</height>
+    <text>C0</text>
+  </widget>
+  <!-- Add more coefficient rows similarly (C1..C4) for brevity, or use a table widget -->
+  <widget type="TextInput" version="2.0.0">
+    <name>Coeff1</name>
+    <x>440</x>
+    <y>275</y>
+    <width>100</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):COEFFS_SET[1]</pv_name>
+  </widget>
+  <widget type="TextInput" version="2.0.0">
+    <name>Coeff2</name>
+    <x>440</x>
+    <y>310</y>
+    <width>100</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):COEFFS_SET[2]</pv_name>
+  </widget>
+  <widget type="TextInput" version="2.0.0">
+    <name>Coeff3</name>
+    <x>440</x>
+    <y>345</y>
+    <width>100</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):COEFFS_SET[3]</pv_name>
+  </widget>
+  <widget type="TextInput" version="2.0.0">
+    <name>Coeff4</name>
+    <x>440</x>
+    <y>380</y>
+    <width>100</width>
+    <height>25</height>
+    <pv_name>$(P):$(R):COEFFS_SET[4]</pv_name>
+  </widget>
+  <widget type="ActionButton" version="2.0.0">
+    <name>UploadCoeffsButton</name>
+    <x>560</x>
+    <y>240</y>
+    <width>120</width>
+    <height>30</height>
+    <text>Upload Coeffs</text>
+    <pv_name>$(P):$(R):COEFFS_UPLOAD</pv_name>
+    <value>1</value>
+    <push_action>WRITE_PV</push_action>
+  </widget>
+
+  <!-- Alarm Banner -->
+  <widget type="Label" version="2.0.0">
+    <name>AlarmBanner</name>
+    <x>30</x>
+    <y>460</y>
+    <width>740</width>
+    <height>40</height>
+    <text>All systems nominal</text>
+    <foreground_color>
+      <color name="Alarm_Normal" red="0" green="255" blue="0"/>
+    </foreground_color>
+    <background_color>
+      <color name="Alarm_Back" red="50" green="50" blue="50"/>
+    </background_color>
+    <border_style>1</border_style>
+    <border_color>
+      <color name="Alarm_Border" red="128" green="128" blue="128"/>
+    </border_color>
+  </widget>
+
+  <!-- Alarm PV Binding (simplified – normally uses alarm PV) -->
+  <widget type="TextUpdate" version="2.0.0" visible="false">
+    <name>AlarmPV</name>
+    <pv_name>$(P):$(R):ALARM_SUMMARY</pv_name>
+  </widget>
+</display>
+```
